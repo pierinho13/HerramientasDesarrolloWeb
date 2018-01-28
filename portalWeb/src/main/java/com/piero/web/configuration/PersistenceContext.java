@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@EnableJpaRepositories(basePackages = { "com.piero.infraestructura.repository" })
+@EnableJpaRepositories(basePackages = { "com.piero.web.infraestructura.repository" })
 @EnableTransactionManagement
 public class PersistenceContext {
 
