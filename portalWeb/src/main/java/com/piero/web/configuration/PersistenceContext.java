@@ -1,10 +1,13 @@
 package com.piero.web.configuration;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +28,8 @@ public class PersistenceContext {
 
 	@Autowired
 	Environment env;
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Bean(destroyMethod = "close")
 	public DataSource dataSource() {
@@ -80,6 +85,11 @@ public class PersistenceContext {
 		// If the value of this property is true, Hibernate will format the SQL
 		// that is written to the console.
 		jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
+		
+			
+		logger.debug("ATENCION: Perfil DEV. Se ha activado hibernate.hbm2ddl.auto y se recrearan las tablas según su configuración: " +env.getRequiredProperty("hibernate.hbm2ddl.auto"));
+		jpaProperties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hibernate.hbm2ddl.auto"));
+		
 
 		entityManagerFactoryBean.setJpaProperties(jpaProperties);
 

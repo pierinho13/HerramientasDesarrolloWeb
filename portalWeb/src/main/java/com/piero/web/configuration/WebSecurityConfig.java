@@ -8,12 +8,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import com.piero.web.security.CustomAuthFailureHandler;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
 	@Autowired
     private UserDetailsService userDetailsService;
+	
+	@Autowired
+	CustomAuthFailureHandler  customAuthFailureHandler;
 	
 	public WebSecurityConfig()
 	{
@@ -31,9 +36,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/login*", "/login/authenticate","/tiendaVirtual/**").permitAll()
+        .antMatchers("/login*", "/login/authenticate", "/tiendaVirtual/**").permitAll()
         .anyRequest().authenticated()
         .and()
-        .formLogin().loginPage("/login").permitAll().loginProcessingUrl( "/login/authenticate" );
+        .formLogin().loginPage("/login").permitAll().loginProcessingUrl( "/login/authenticate" )
+        .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true)
+        .and().formLogin().failureHandler(customAuthFailureHandler).failureUrl("/login?error=bad_credentials")
+        .and().rememberMe().tokenValiditySeconds(1200);
     } 
 }

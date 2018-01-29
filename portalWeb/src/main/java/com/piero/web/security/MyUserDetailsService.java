@@ -62,16 +62,18 @@ public class MyUserDetailsService implements UserDetailsService
 		if (roles==null || roles.size()==0) {
 			loginLogger.error("Login fallido para {}. El usuario no tiene roles asignados.",_username);
 			throw new IllegalStateException("Un Usuario tiene que tener al menos un Rol");
-		}
+		} 
 		
-		AppUser _user = new AppUser( _username, _usuario.getPassword(), roles );
+		AppUser user = new AppUser( _username, _usuario.getPassword(), roles );
 
 		if (_usuario.getPersona()!=null){
-			Persona persona = this.personaRepository.findOne( _usuario.getPersona().getId() );
-			_user.setPersonaId( persona.getId() );
-			_user.setPersonaNombre( persona.getNombre() );
+			Persona persona = this.personaRepository.findById( _usuario.getPersona().getId() );
+			user.setPersonaId( persona.getId() );
+			user.setPersonaNombre( persona.getNombre() );
+			user.setIsAdmin(roles.iterator().next().getEsAdmin());
 			
 		}
-		return _user;
+		
+		return user;
 	}
 }

@@ -21,7 +21,7 @@ public class IndexController {
 			user = new AppUser("piero", "pass", Arrays.asList());
 		}
 		
-		model.addAttribute("palabra", "prueba");
+		model.addAttribute("esAdmin", user.getIsAdmin());
 		
         return "index";
     }

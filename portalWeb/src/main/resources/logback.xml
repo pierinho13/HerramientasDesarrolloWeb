@@ -6,11 +6,11 @@
 			<pattern>%d %5p | %t | %-55logger{55} | %m %n</pattern>
 		</encoder>
 	</appender>
-	<logger name="com.digitaljm">
-		<level value="TRACE" />
+	<logger name="com.piero.web" level="debug">
+		<level value="DEBUG" />
 	</logger>
 	<logger name="org.springframework">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 	<root>
 		<level value="INFO" />

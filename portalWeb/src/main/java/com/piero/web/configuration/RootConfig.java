@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@ComponentScan(basePackages = {"com.piero.infraestructura","com.piero.web.security"})
+@ComponentScan(basePackages = {"com.piero.web","com.piero.web.infraestructura","com.piero.web.security"})
 @PropertySource({"classpath:ds.properties"})
 public class RootConfig {
 

@@ -29,6 +29,8 @@ import org.springframework.web.servlet.view.JstlView;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.piero.web.infraestructura.converters.PersonaConverter;
+import com.piero.web.resolvers.AppUserResolver;
 
 @Configuration
 @EnableWebMvc
@@ -41,8 +43,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//	@Autowired private ClienteConverter clienteConverter;
-//	@Autowired private AppUserResolver appUserResolver;
+	@Autowired private PersonaConverter personaConverter;
+	@Autowired private AppUserResolver appUserResolver;
 
 	@Bean
 	public ViewResolver viewResolver() {
@@ -73,7 +75,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new PageableHandlerMethodArgumentResolver());
-//		argumentResolvers.add( new ServletWebArgumentResolverAdapter(appUserResolver));
+		argumentResolvers.add( new ServletWebArgumentResolverAdapter(appUserResolver));
 	}
 	
 	@Override
@@ -84,7 +86,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
-//		registry.addConverter(clienteConverter);
+		registry.addConverter(personaConverter);
 		super.addFormatters(registry);
 	}
 	
@@ -95,13 +97,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	  jsonConverter.setObjectMapper(objectMapper);
 	  return jsonConverter;
 	} 
-	
-	@Bean(name = "multipartResolver")
-    public MultipartResolver multipartResolver() {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(5000000);
-        multipartResolver.setMaxInMemorySize(5000000);
-        multipartResolver.setDefaultEncoding("utf-8");
-        return multipartResolver;
-    }
+//	
+//	@Bean(name = "multipartResolver")
+//    public MultipartResolver multipartResolver() {
+//        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+//        multipartResolver.setMaxUploadSize(5000000);
+//        multipartResolver.setMaxInMemorySize(5000000);
+//        multipartResolver.setDefaultEncoding("utf-8");
+//        return multipartResolver;
+//    }
 }

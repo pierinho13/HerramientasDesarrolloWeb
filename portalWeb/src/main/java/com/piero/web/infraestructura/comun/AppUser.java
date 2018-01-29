@@ -9,14 +9,13 @@ public class AppUser extends User {
 
 	private Long personaId;
 	private String personaNombre;
-	private String username;
-	private String password;
+	private Boolean isAdmin;
+	
 	
 	public AppUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, authorities);
 	}
-
-
+	
 	public Long getPersonaId() {
 		return personaId;
 	}
@@ -35,30 +34,16 @@ public class AppUser extends User {
 	public void setPersonaNombre(String personaNombre) {
 		this.personaNombre = personaNombre;
 	}
-
-	public String getUsername() {
-		return username;
+	
+	public Boolean getIsAdmin() {
+		return isAdmin;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setIsAdmin(Boolean isAdmin) {
+		this.isAdmin = isAdmin;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	private static final long serialVersionUID = 3909914989835286267L;
-
-//	public boolean esAdmin() {
-//		if (clienteId==null)
-//			return true;
-//		return false;
-//	}
 
 }

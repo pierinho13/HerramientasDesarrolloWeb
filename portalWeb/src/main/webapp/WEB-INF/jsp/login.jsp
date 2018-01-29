@@ -1,85 +1,53 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core"        prefix="c" %>
 <!DOCTYPE html>
+<html lang="es">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
-<link href="styles.css" rel="stylesheet" type="text/css"/>
+<link href="" rel="stylesheet" type="text/css"/>
 <head>
-<title>Login en Tienda Virtual</title>
+<title>TIENDA VIRTUAL PIERO</title>
 </head>
-<body id="" data-login="PAGINA_DE_LOGIN">
-	<div class="container">
+<body style="background-color: #D8E5F6;">
+	<div>
 	
-		<c:if test="${not empty errorMessage and errorMessage ne ''}">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="alert alert-danger">
-						<p>${errorMessage}</p>
-					</div>		
-				</div>
-			</div>
-		</c:if>
-		<c:if test="${not empty successMessage and successMessage ne ''}">
-			<div class="row">
-				<div class="col-xs-12">
-					<div class="alert alert-success">
-						<p>${successMessage}</p>
-					</div>		
-				</div>
-			</div>
-		</c:if>
-		<header class="">
-			<h1 class="">Tienda Virtual Piero</h1>
+		<header>
+			<h1 >TIENDA VIRTUAL PIERO</h1>
 		</header>					
 					
-		<section class="login-box">
+		<section>
 			
-			<form id="login-form" class="" action="/login/authenticate" method="post">
+			<form id="login-form"  action="/login/authenticate" method="post">
 				<fieldset>
 					
-					<legend class="">Accede con tu cuenta</legend>
+					<legend >Accede con tu cuenta</legend>
 					
-					<div class="">
+					<div>
 						
-						<label for="usuario" class="">usuario</label>
-						<input class="login-form__input" name="username" type="text" />
+						<label for="usuario" >usuario</label>
+						<input  id="usuario" name="username" autocomplete="on" type="text" />
 
-						<label for="password" class="">contraseña</label>
-						<input class="login-form__input" name="password" id="password" type="password" />
+						<label for="password" >contraseña</label>
+						<input  name="password" id="password" type="password" />
 
-						<div class="clearfix"></div>
 						<c:if test="${param.error eq 'bad_credentials'}">
-							<div class="row" id="badCredentialsDiv">
-								<div class="col-xs-12">
-									<div class="alert alert-danger">
+							<div  id="badCredentialsDiv">
+								<div>
+									<div >
 										<p>Usuario o contraseña incorrectos</p>
 									</div>		
 								</div>
 							</div>
 						</c:if>
-						<c:if test="${param.error eq 'not_allowed_schedule'}">
-							<div class="row" id="badCredentialsDiv">
-								<div class="col-xs-12">
-									<div class="alert alert-danger">
-										<p>No puedes usar la aplicación fuera de tu horario permitido</p>
-									</div>		
-								</div>
-							</div>
-						</c:if>
-						
-						<c:if test="${not empty param.sigeouser and param.sigeouser eq 'true'}">
-							<input type="hidden" name="sigeouser" value="true" />
-						</c:if>
 						
 						<div>
-							<input type="checkbox" class="" id="remember-me" name="remember-me" checked="checked"/> 
-							<label class="" for="remember-me">No cerrar sesión</label>
+							<input type="checkbox"  id="remember-me" name="remember-me" checked="checked"/> 
+							<label  for="remember-me">No cerrar sesión</label>
 						</div>
 						
-						
-						<div class="">
-							<button type="submit" class="" id="loginButton"><span class=" ">Entrar</span></button>
+						<div >
+							<button type="submit"  id="loginButton"><span>Entrar</span></button>
 						</div>
 					</div>
 				
@@ -88,7 +56,7 @@
 			</form>
 		</section>	
 		
-	</div><!--/container-->
+	</div>
 	
 
 </body>
