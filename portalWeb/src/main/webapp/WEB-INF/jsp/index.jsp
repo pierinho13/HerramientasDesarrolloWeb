@@ -8,10 +8,16 @@
 </head>
 <body style="background-color: #D8E5F6;" id="" data-login="PAGINA_DE_LOGIN">
 	<div >
-		<p>ESTA ES LA PAGINA DE QUE TE HAS LOGUEADO CORRECTAMENTE</p>
+		<c:choose>
+			<c:when test="${not empty mensaje}">
+				<h1>${mensaje}</h1>
+			</c:when>
+			<c:otherwise>
+				<p>ESTA ES LA PAGINA DE QUE TE HAS LOGUEADO CORRECTAMENTE</p>
+			</c:otherwise>
+		</c:choose>
 		
 		<c:choose>
-		
 			<c:when test="${esAdmin!= null && esAdmin == true}">
 				<h2>Estas son las opciones para el administrador</h2>
 				<ol>

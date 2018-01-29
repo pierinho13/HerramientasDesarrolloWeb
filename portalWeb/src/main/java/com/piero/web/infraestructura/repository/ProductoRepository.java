@@ -13,6 +13,8 @@ public interface ProductoRepository extends PagingAndSortingRepository<Producto,
 
 	Producto findById(Long id);
 	
+	Producto findByCodigoIgnoreCase(String codigo);
+	
 	@Query("select p from Producto p")
 	List<Producto> getAllProducts();
 }

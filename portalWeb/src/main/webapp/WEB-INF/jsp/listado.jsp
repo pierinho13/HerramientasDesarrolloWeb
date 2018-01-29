@@ -30,12 +30,14 @@ tr:nth-child(even) {
 		<table>
 		  <tr>
 		    <th>Nombre</th>
+		    <th>Codigo</th>
 		    <th>Precio</th>
 		    <th>Cantidad</th>
 		  </tr>
 		  <c:forEach items ="${productos}" var="producto">
 			  <tr>
 			    <td>${producto.nombre}</td>
+			    <td>${producto.codigo}</td>
 			    <td>${producto.precio}</td>
 			    <td>${producto.cantidad}</td>
 			  </tr>

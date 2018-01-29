@@ -12,11 +12,12 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(uniqueConstraints={@UniqueConstraint(columnNames= "nombre")})
+@Table(uniqueConstraints={@UniqueConstraint(columnNames= "codigo")})
 public class Producto implements Serializable {
 	
 	private Long id;
 	private String nombre;
+	private String codigo;
 	private BigDecimal precio;
 	private Integer cantidad;
 
@@ -54,6 +55,14 @@ public class Producto implements Serializable {
 
 	public void setCantidad(Integer cantidad) {
 		this.cantidad = cantidad;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	private static final long serialVersionUID = -1323016656165223410L;

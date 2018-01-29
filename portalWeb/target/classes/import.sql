@@ -18,7 +18,7 @@ insert into usuario_rol values (2,2);
 
 ---productos----
 
-insert into producto values (1,5'Pantalon',200);
-insert into producto values (2,7,'Camisa',500);
-insert into producto values (3,2,'Televisor',600);
-insert into producto values (4,5,'Libro Spring',600);
+insert into producto values (1,5,'AAA','Pantalon',200);
+insert into producto values (2,7,'BBB','Camisa',500);
+insert into producto values (3,2,'CCC','Televisor',600);
+insert into producto values (4,5,'DDD','Libro Spring',600);

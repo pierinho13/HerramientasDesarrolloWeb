@@ -1,8 +1,10 @@
 package com.piero.web.controllers;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,6 +57,11 @@ public class TiendaController {
 			} else {
 				model.addAttribute("mensaje","SE HA DADO DE ALTA EXITOSAMENTE");
 			}
+			
+			if (StringUtils.isBlank(producto.getCodigo())) {
+				Date fecha = new Date();
+				producto.setCodigo(producto.getNombre()+ fecha.getTime());
+			}
 			productoRepository.save(producto);
 			
 			model.addAttribute("productos",productoRepository.getAllProducts());
@@ -64,6 +71,44 @@ public class TiendaController {
 		}
 		
 		return "listado";
+	}
+	
+	@RequestMapping(value="/tiendaVirtual/postComprar", method = RequestMethod.POST)
+	public String postCompra(@ModelAttribute("productoForm") Producto producto,Model model, AppUser user) {
+		
+		try {
+			if (StringUtils.isBlank(producto.getCodigo())) {
+				model.addAttribute("mensaje","NO SE HA ESCRITO NINGUN CODIGO");
+				return "errorCompra";
+			} 
+			
+			Producto p = productoRepository.findByCodigoIgnoreCase(producto.getCodigo());
+			
+			if (p == null) {
+				model.addAttribute("mensaje","NO SE ENCUENTRA NINGUN PRODUCTO PARA EL CODIGO: " +producto.getCodigo());
+				return "errorCompra";
+			}
+			if (p.getCantidad()!= null && p.getCantidad()<1) {
+				model.addAttribute("mensaje","NO SE DISPONE STOCK DEL PRODUCTO: " +p.getNombre());
+				return "errorCompra";
+			}
+			Integer diferenciaCantidad = p.getCantidad()-producto.getCantidad();
+			
+			if (diferenciaCantidad<0) {
+				model.addAttribute("mensaje","SE DISPONE DEL PRODUCTO PERO NO TANTA CANTIDAD. SOLO QUEDA: " +p.getCantidad());
+				return "errorCompra";
+			}
+			
+			p.setCantidad(diferenciaCantidad);
+			productoRepository.save(p);
+			
+			model.addAttribute("mensaje","COMPRA REALIZADA CORRECTAMENTE");
+		} catch (Exception e) {
+			model.addAttribute("mensaje","SE HA PRODUCIDO ERROR INTENTELO NUEVAMENTE");
+			return "compra";
+		}
+		
+		return "index";
 	}
 	
 	@RequestMapping(value="/tiendaVirtual/baja", method = RequestMethod.GET)
@@ -154,12 +199,11 @@ public class TiendaController {
 	@RequestMapping(value="/tiendaVirtual/compra", method = RequestMethod.GET)
 	public String getCompra(Model model, AppUser user) {
 		
-		if (user==null) {
-			user = new AppUser("piero", "pass", Arrays.asList());
-		}
+		Producto producto = new Producto();
 		
-		model.addAttribute("esAdmin", user.getIsAdmin());
+		model.addAttribute("productoForm", producto);
 		
-		return "index";
+		
+		return "compra";
 	}
 }
