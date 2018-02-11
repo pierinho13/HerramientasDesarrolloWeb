@@ -22,8 +22,8 @@ public class Producto implements Serializable {
 	private Integer cantidad;
 
 	@Id
-	@SequenceGenerator(name="Persona_pk_sequence",sequenceName="Persona_sequence",allocationSize=5) 
-	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="Persona_pk_sequence")
+	@SequenceGenerator(name="Producto_pk_sequence",sequenceName="Producto_sequence",allocationSize=5,initialValue = 20) 
+	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="Producto_pk_sequence")
 	public Long getId() {
 		return id;
 	}

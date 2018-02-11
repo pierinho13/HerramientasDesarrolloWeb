@@ -19,7 +19,7 @@ public class Persona implements Serializable {
 	private String codigo;
 
 	@Id
-	@SequenceGenerator(name="Persona_pk_sequence",sequenceName="Persona_sequence",allocationSize=5) 
+	@SequenceGenerator(name="Persona_pk_sequence",sequenceName="Persona_sequence",allocationSize=5,initialValue = 20) 
 	@GeneratedValue(strategy=GenerationType.SEQUENCE,generator="Persona_pk_sequence")
 	public Long getId() {
 		return id;

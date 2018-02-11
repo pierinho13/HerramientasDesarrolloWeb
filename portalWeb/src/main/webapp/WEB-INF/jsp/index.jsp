@@ -26,6 +26,7 @@
 				  <li><a href="/tiendaVirtual/modificacion">Modificación de productos</a></li>
 				  <li><a href="/tiendaVirtual/listado">Listado de productos</a></li>
 				  <li><a href="/tiendaVirtual/reposicion">Reposición de productos</a></li>
+				  <li><a href="/tiendaVirtual/importarDesdeAPIForm">Importar productos de API PROVEEDORES</a></li>
 				</ol> 
 			</c:when>
 			<c:otherwise>

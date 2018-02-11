@@ -1,21 +1,42 @@
 package com.piero.web.controllers;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.piero.web.infraestructura.comun.AppUser;
 import com.piero.web.infraestructura.entidades.Producto;
 import com.piero.web.infraestructura.repository.ProductoRepository;
+import com.piero.web.security.RestService;
+import com.piero.web.utils.MensajeRespuesta;
+import com.piero.web.utils.ProductoProveedorDTO;
+
+import ch.qos.logback.access.jetty.JettyServerAdapter;
 
 
 @Controller
@@ -23,6 +44,12 @@ public class TiendaController {
 	
 	@Autowired
 	ProductoRepository productoRepository;
+	
+	@Autowired
+	private RestService restService;
+	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	
 	
 	@RequestMapping(value="/tiendaVirtual/alta", method = RequestMethod.GET)
@@ -36,6 +63,17 @@ public class TiendaController {
         return "alta";
     }
 	
+	@RequestMapping(value="/tiendaVirtual/importarDesdeAPIForm", method = RequestMethod.GET)
+	public String getImportarDesdeAPI(Model model, AppUser user) {
+		
+		
+		Producto producto = new Producto();
+		
+		model.addAttribute("productoForm", producto);
+		
+		return "importarDesdeAPI";
+	}
+	
 	@RequestMapping(value="/tiendaVirtual/editarProducto/{productId}", method = RequestMethod.GET)
 	public String getEditarProducto(@PathVariable Long productId,Model model, AppUser user) {
 		
@@ -44,6 +82,7 @@ public class TiendaController {
 		
 		model.addAttribute("productoForm", producto);
 		model.addAttribute("producto", producto);
+		
 		
 		return "alta";
 	}
@@ -205,5 +244,104 @@ public class TiendaController {
 		
 		
 		return "compra";
+	}
+	
+	@RequestMapping(value="/tiendaVirtual/importarProductosAPi", method = RequestMethod.GET)
+	public String getImportarProductos(HttpServletRequest request, Model model) {
+		
+		
+		try {
+			
+			List<Producto> productos = new ArrayList<>();
+			
+			Map<String, Object> params = this.obtieneParametrosRequest( request );
+			
+			String host=  restService.APIHOST ;
+			
+			if (params.containsKey("api")) {
+				host = (String) params.get("api");
+			}
+			
+			LinkedHashMap<String, Object> respuesta = (LinkedHashMap<String, Object>) restService.get( host+"/"+restService.API_PREFIX+"/producto/porCantidadYFecha", params );
+			
+			if(respuesta != null) {
+				
+			String estado = (String)respuesta.get("estado");
+			List<LinkedHashMap> productosDto = (List<LinkedHashMap> ) respuesta.get("productos");
+			
+			if (estado.equals("OK")) {
+				
+				if(CollectionUtils.isNotEmpty(productosDto)) {
+					
+					for (LinkedHashMap dto: productosDto) {
+						Gson gson = new Gson();
+						Producto producto = new Producto();
+						JsonElement jsonElement = gson.toJsonTree(dto);
+						JsonObject jsonObject = jsonElement.getAsJsonObject();
+						jsonObject.remove("fechaEntrada");
+						jsonObject.remove("id");
+						ProductoProveedorDTO productoProveedorDTO = gson.fromJson(jsonObject, ProductoProveedorDTO.class);
+						BeanUtils.copyProperties(producto, productoProveedorDTO);
+						producto.setId(null);
+						Date now = new Date();
+						producto.setNombre(producto.getNombre()+"-API-"+now.getTime());
+						producto.setCodigo(producto.getCodigo()+"-API-"+now.getTime());
+						producto.setCantidad(Integer.valueOf((String)params.get("cantidad")));
+						productos.add(producto);
+						
+						productoRepository.save(producto);
+					}
+					
+					
+					model.addAttribute("productos", productoRepository.getAllProducts());
+					model.addAttribute("mensaje", "IMPORTADOS CORRECTAMENTE");
+					
+				} else {
+					model.addAttribute("productos", productoRepository.getAllProducts());
+					model.addAttribute("mensaje", "NO SE HA ENCONTRADO UN PRODUCTO QUE SE AJUSTE A LO REQUERIDO");
+				}
+				
+				return "listado";
+			 } else {
+					model.addAttribute("mensaje", "NO SE HA ENCONTRADO NINGUN  PRODUCTO CON ESAS CARACTERISTICAS");
+					return "listado";
+				}
+			}else {
+				
+				model.addAttribute("mensaje", "NO SE HA ENCONTRADO NINGUN  PRODUCTO CON ESAS CARACTERISTICAS O NO SE HA PODIDO HACER CONEXION CON EL API");
+				return "listado";
+			
+			} 
+		}catch (Exception e) {
+			model.addAttribute("mensaje", "NO SE HA PODIDO IMPORTAR DESDE EL API REST. ERROR INTERNO");
+			e.printStackTrace();
+			return "listado";
+		}
+	}
+	
+	private Map<String, Object> obtieneParametrosRequest( HttpServletRequest request )
+	{
+		try {
+			request.getParts();
+		} catch( Exception _ex ) {} // no me has mandado nada 
+		
+		if( request == null || request.getParameterNames() == null || ! request.getParameterNames().hasMoreElements() ){
+			return null;
+		}
+			
+
+		Map<String, Object> ret = new HashMap<>();
+
+		Enumeration<String> params = request.getParameterNames();
+		
+		while( params.hasMoreElements() )  {
+			String param = params.nextElement();
+			
+			logger.trace( "Param: " + param + " value: " + request.getParameter( param ) );
+			
+			ret.put( param, request.getParameter( param ) );
+		}
+		
+		return ret;
 	}
 }
